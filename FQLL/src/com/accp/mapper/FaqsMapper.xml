@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<!-- namespacemore设置实体类对象的dao接口的全路径类名 -->
+<mapper namespace="com.accp.dao.FaqsDao">
+ 	<resultMap type="Faqs" id="faqMap">
+    	<result column="ID" jdbcType="INTEGER" property="id"/>
+    	<result column="TITLE" jdbcType="VARCHAR" property="title"/>
+    	<result column="CREATEDATE" jdbcType="VARCHAR" property="createdate"/>
+    	<result column="CONTENT" jdbcType="VARCHAR" property="content"/>
+    	
+    	<!-- 多对一 -->
+    	<association property="cla" javaType="Classes"> 
+    		<result column="ID" jdbcType="INTEGER" property="id"/>
+    	<result column="CNAME" jdbcType="VARCHAR" property="cname"/>
+    	</association>
+    </resultMap>
+    
+    <!-- 分页查询 -->
+    <select id="findByPage" parameterType="java.lang.Integer" resultMap="faqMap">
+    	SELECT * FROM 
+		(
+		   SELECT ROWNUM rn,f.*,c.cname 
+		      FROM faqs f INNER JOIN classes c ON f.classid = c.id
+		      ORDER BY f.createdate DESC
+		)dr
+		WHERE dr.rn <![CDATA[>]]> #{0} AND dr.rn <![CDATA[<=]]>#{1}
+    </select>
+    
+     <!--  获取总记录数  -->
+    <select id="findCount" resultType="Integer">
+    	SELECT count(*) FROM faqs f INNER JOIN classes c ON f.classid = c.id
+    </select>
+    
+	<insert id="addFaqs">
+		INSERT INTO faqs(ID,TITLE,CREATEDATE,CONTENT,CLASSID) 
+			VALUES(#{id},#{title},to_date(#{createdate},'yyyy-mm-dd'),#{content},#{cla.id})
+	</insert>
+	
+	<delete id="delFaqsById">
+		DELETE faqs WHERE id = #{id}
+	</delete>
+	
+</mapper>

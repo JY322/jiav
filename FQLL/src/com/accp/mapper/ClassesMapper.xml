@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<!-- namespacemore设置实体类对象的dao接口的全路径类名 -->
+<mapper namespace="com.accp.dao.ClassesDao">
+ 	<resultMap type="Classes" id="claMap">
+    	<result column="ID" jdbcType="INTEGER" property="id"/>
+    	<result column="CNAME" jdbcType="VARCHAR" property="cname"/>
+    	
+    	<!-- 一对多关系 -->
+    	<collection property="faqList" ofType="Faqs">
+    		<id column="ID" jdbcType="INTEGER" property="id"/>
+	    	<result column="TITLE" jdbcType="VARCHAR" property="title"/>
+	    	<result column="CREATEDATE" jdbcType="DATE" property="createdate"/>
+	    	<result column="CONTENT" jdbcType="VARCHAR" property="content"/>
+    	</collection>
+    </resultMap>
+    
+    <select id="findClasses" resultMap="claMap">
+    	SELECT * FROM classes
+    </select>
+    
+</mapper>
